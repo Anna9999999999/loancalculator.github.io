@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кредитный калькулятор</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .radio-option {
+            display: flex;
+            align-items: center;
+        }
+        .radio-option input {
+            width: auto;
+            margin-right: 10px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 5px;
+            display: none;
+        }
+        .approved {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .rejected {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .section-title {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Оценка кредитоспособности</h1>
+        <form id="creditForm">
+            <div class="section">
+                <div class="section-title">Личная информация</div>
+                
+                <div class="form-group">
+                    <label for="name">Ваше ФИО:</label>
+                    <input type="text" id="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="age">Ваш возраст:</label>
+                    <input type="number" id="age" min="18" max="100" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Тип занятости:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="job_a" name="job" value="a" required>
+                            <label for="job_a">самозанятый</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="job_b" name="job" value="b">
+                            <label for="job_b">ИП</label>
+                        </div>
+                        <div class="radio-option">
+ <input type="radio" id="job_c" name="job" value="c">
+                            <label for="job_c">наемный рабочий</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="job_d" name="job" value="d">
+                            <label for="job_d">студент</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="job_k" name="job" value="k">
+                            <label for="job_k">пенсионер</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="job_l" name="job" value="l">
+                            <label for="job_l">безработный</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Срок постоянной работы:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="work_a" name="work" value="a" required>
+                            <label for="work_a">более 3-х месяцев</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="work_b" name="work" value="b">
+                            <label for="work_b">менее 3-х месяцев</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="work_c" name="work" value="c">
+                            <label for="work_c">безработный/студент/пенсионер</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Финансовая информация</div>
+                
+                <div class="form-group">
+                    <label for="income">Общий доход (заработная плата + дополнительные выплаты):</label>
+                    <input type="number" id="income" min="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Семейное положение:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="marriage_a" name="marriage" value="a" required>
+                            <label for="marriage_a">женат/замужем</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="marriage_b" name="marriage" value="b">
+                            <label for="marriage_b">одинок(а)</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="spouseIncome">Зарплата супруги/супруга (при отсутствии введите "0"):</label>
+                    <input type="number" id="spouseIncome" min="0" value="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="dependents">Количество иждивенцев (при отсутствии введите "0"):</label>
+                    <input type="number" id="dependents" min="0" value="0" required>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Дополнительная информация</div>
+                
+                <div class="form-group">
+                    <label>Кредитная история:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="credit_a" name="credit" value="a" required>
+                            <label for="credit_a">нет истории</label>
+                        </div>
+<div class="radio-option">
+                            <input type="radio" id="credit_b" name="credit" value="b">
+                            <label for="credit_b">просрочки отсутствуют</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="credit_c" name="credit" value="c">
+                            <label for="credit_c">погашенный кредит с просрочками</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="credit_d" name="credit" value="d">
+                            <label for="credit_d">долг не погашен</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Жилье:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="home_a" name="home" value="a" required>
+                            <label for="home_a">в собственности</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="home_b" name="home" value="b">
+                            <label for="home_b">в аренду</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="home_c" name="home" value="c">
+                            <label for="home_c">общежитие</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="home_d" name="home" value="d">
+                            <label for="home_d">в собственности родственников/знакомых</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Гражданство:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="citizen_a" name="citizen" value="a" required>
+                            <label for="citizen_a">РФ</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="citizen_b" name="citizen" value="b">
+                            <label for="citizen_b">ВНЖ</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Цели кредита:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="goal_a" name="goal" value="a" required>
+                            <label for="goal_a">образование</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="goal_b" name="goal" value="b">
+                            <label for="goal_b">медицина</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="goal_c" name="goal" value="c">
+                            <label for="goal_c">автомобиль</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="goal_d" name="goal" value="d">
+                            <label for="goal_d">другое</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Параметры кредита</div>
+                
+                <div class="form-group">
+                    <label for="amount">Сумма, которую хотите взять в кредит:</label>     
+<input type="number" id="amount" min="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="term">Срок (в месяцах), на который хотите взять кредит:</label>
+                    <input type="number" id="term" min="1" required>
+                </div>
+            </div>
+            
+            <button type="submit">Рассчитать кредит</button>
+        </form>
+        
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        document.getElementById('creditForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Сбор данных из формы
+            const name = document.getElementById('name').value;
+            const age = parseInt(document.getElementById('age').value);
+            const job = document.querySelector('input[name="job"]:checked').value;
+            const work = document.querySelector('input[name="work"]:checked').value;
+            const income = parseInt(document.getElementById('income').value);
+            const marriage = document.querySelector('input[name="marriage"]:checked').value;
+            const spouseIncome = parseInt(document.getElementById('spouseIncome').value);
+            const dependents = parseInt(document.getElementById('dependents').value);
+            const credit = document.querySelector('input[name="credit"]:checked').value;
+            const home = document.querySelector('input[name="home"]:checked').value;
+            const citizen = document.querySelector('input[name="citizen"]:checked').value;
+            const goal = document.querySelector('input[name="goal"]:checked').value;
+            const amount = parseInt(document.getElementById('amount').value);
+            const term = parseInt(document.getElementById('term').value);
+            
+            let f = 0;
+            let result = document.getElementById('result');
+            
+            // Проверка возраста
+            if (age < 18 || age > 70) {
+                result.className = 'result rejected';
+                result.innerHTML = '<h3>Кредит не одобрен по возрастному признаку</h3>';
+                result.style.display = 'block';
+                return;
+            } else if (age >= 18 && age <= 21) {
+                f += 1;
+            } else if (age >= 22 && age <= 25) {
+                f += 2;
+            } else if (age >= 26 && age <= 35) {
+                f += 3;
+            } else if (age >= 36 && age <= 50) {
+                f += 4;
+            } else if (age >= 51 && age <= 60) {
+                f += 5;
+            } else if (age >= 61 && age <= 70) {
+                f += 1;
+            }
+            
+            // Тип занятости
+            if (job === 'a' || job === 'b') {
+                f += 10;
+            } else if (job === 'c') {
+                f += 5;
+            } else if (job === 'd') {
+                f += 3;
+            }
+            
+            // Срок работы
+            if (work === 'a') {
+                f += 10;
+            } else if (work === 'b') {
+                f += 5;
+            }
+            
+            // Кредитная история
+            if (credit === 'b') {
+                f += 10;
+            } else if (credit === 'c') {
+                f += 5;
+            } else if (credit === 'd') {
+                f -= 5;
+            }
+            
+            // Жилье
+            if (home === 'a') {
+                f += 10;
+            }
+            
+            // Гражданство
+            if (citizen !== 'a') {
+                result.className = 'result rejected';
+                result.innerHTML = '<h3>Кредит не может быть одобрен из-за отсутствия гражданства РФ</h3>';
+                result.style.display = 'block';
+                return;
+            }
+            
+            // Расчет кредита
+            let R = 0;
+            
+            if (f >= 0 && f <= 9 && goal !== 'a') {
+                result.className = 'result rejected';
+                result.innerHTML = '<h3>Кредит не одобрен, приносим свои извинения</h3>';  
+result.style.display = 'block';
+                return;
+            } else if (f >= 10 && f <= 18 && goal !== 'a') {
+                R = 47.01 / 100;
+            } else if (f >= 19 && f <= 27 && goal !== 'a') {
+                R = 37.2 / 100;
+            } else if (f >= 28 && f <= 36 && goal !== 'a') {
+                R = 27.39 / 100;
+            } else if (f >= 37 && f <= 45 && goal !== 'a') {
+                R = 22.9 / 100;
+            } else if (f >= 1 && f <= 45 && goal === 'a') {
+                R = 3 / 100;
+            }
+            
+            // Расчет свободных средств
+            let cvob;
+            if (spouseIncome !== 0) {
+                cvob = (income + spouseIncome) - ((2 + dependents) * 20000);
+            } else {
+                cvob = (income + spouseIncome) - ((1 + dependents) * 20000);
+            }
+            
+            // Расчет ежемесячного платежа
+            const M = R / 12;
+            let P = amount * (M * Math.pow(1 + M, term)) / (Math.pow(1 + M, term) - 1);
+            P = Math.floor(P);
+            
+            R = Math.round(R * 100 * 100) / 100;
+            
+            // Вывод результата
+            if (P <= cvob) {
+                result.className = 'result approved';
+                result.innerHTML = `
+                    <h3>Кредит одобрен!</h3>
+                    <p><strong>Клиент:</strong> ${name}</p>
+                    <p><strong>Одобренная сумма:</strong> ${amount} руб.</p>
+                    <p><strong>Срок выплаты:</strong> ${term} месяцев</p>
+                    <p><strong>Процентная ставка:</strong> ${R}%</p>
+                    <p><strong>Размер ежемесячного платежа:</strong> ${P} руб.</p>
+                `;
+            } else {
+                result.className = 'result rejected';
+                result.innerHTML = '<h3>Кредит не одобрен - слишком высокий платеж</h3>';
+            }
+            
+            result.style.display = 'block';
+        });
+    </script>
+</body>
+</html>
